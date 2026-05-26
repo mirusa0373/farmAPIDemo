@@ -57,4 +57,14 @@ app.MapDelete("/animals/{name}", (string name) =>
     .WithName("RemoveAnimal")
     .WithOpenApi();
 
+// add a route to return a random animal
+app.MapGet("/animals/random", () =>
+{
+    var random = new Random();
+    int index = random.Next(animals.Count);
+    return animals[index];
+})
+    .WithName("GetRandomAnimal")
+    .WithOpenApi();
+
 app.Run();
