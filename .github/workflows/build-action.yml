@@ -17,5 +17,3 @@ jobs:
       run: dotnet build --no-restore
     - name: Test with the dotnet CLI
       run: dotnet test --no-build
-
-      #
