@@ -25,6 +25,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: package-app-${{github.event.workflow_run.run_number}}
+          run-id: ${{github.event.workflow_run.id}}
           path: ./publish
 
   deploy-dev:
@@ -36,6 +37,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: package-app-${{github.event.workflow_run.run_number}}
+          run-id: ${{github.event.workflow_run.id}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
 
@@ -48,6 +50,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: package-app-${{github.event.workflow_run.run_number}}
+          run-id: ${{github.event.workflow_run.id}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
 
@@ -60,5 +63,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: package-app-${{github.event.workflow_run.run_number}}
+          run-id: ${{github.event.workflow_run.id}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
