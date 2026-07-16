@@ -1,68 +1,79 @@
 name: build-deployable
 run-name: ${{ startsWith(github.ref, 'refs/tags/') && format('[{0}] [{1}] Building Deployable Artifact', github.ref_name, github.event.head_commit.message || 'no commit message') || 'Building Deployable Artifact' }}
-on:
-  workflow_run:
-    workflows: [build-action]
-    types: [completed]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "The environment to deploy to"
-        required: true
-        default: "test"
-        type: choice
-        options:
-        - dev
-        - staging
-        - production
-
+on: 
+    push:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: "The environment to deploy to"
+                required: true
+                default: "test"
+                type: choice
+                options:
+                - dev
+                - staging
+                - production
+                
 jobs:
-  check-build:
+  build:
+
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
-      - name: Download artifact from build-action
-        uses: actions/download-artifact@v4
-        with:
-          name: package-app-${{github.event.workflow_run.run_number}}
-          run-id: ${{github.event.workflow_run.id}}
-          path: ./publish
+    - uses: actions/checkout@v6
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.313'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test with the dotnet CLI
+      run: dotnet test --configuration Release --no-build
+    - name: Publish
+      run: dotnet publish FarmAPI/FarmAPI.csproj --configuration Release --no-build --output ./publish
+    - uses: actions/upload-artifact@v4
+      with:
+        name: package-app-${{github.run_number}}
+        path: ./publish
 
   deploy-dev:
-    needs: check-build
+    needs: build
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
+      - name: Deploy Artifact to Azure App Service Staging
+        uses: actions/download-artifact@v5
         with:
-          name: package-app-${{github.event.workflow_run.run_number}}
-          run-id: ${{github.event.workflow_run.id}}
+          name: 
+            package-app-${{github.run_number}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
 
   deploy-staging:
-    needs: [check-build, deploy-dev]
+    needs: [build, deploy-dev]
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
+      - name: Deploy Artifact to Azure App Service Staging
+        uses: actions/download-artifact@v5
         with:
-          name: package-app-${{github.event.workflow_run.run_number}}
-          run-id: ${{github.event.workflow_run.id}}
+          name: 
+            package-app-${{github.run_number}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
 
   deploy-prod:
-    needs: [check-build, deploy-staging]
+    needs: [build, deploy-staging]
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
+      - name: Deploy Artifact to Azure App Service Prod
+        uses: actions/download-artifact@v5
         with:
-          name: package-app-${{github.event.workflow_run.run_number}}
-          run-id: ${{github.event.workflow_run.id}}
+          name: 
+            package-app-${{github.run_number}}
       - name: Print
         run: echo "${{ vars.PRINT_STRING_ENV_MSG }}"
+  
+  
