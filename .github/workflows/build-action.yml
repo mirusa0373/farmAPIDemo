@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -16,12 +17,6 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --no-restore
     - name: Test with the dotnet CLI
-      run: dotnet test --configuration Release --no-build
-    - name: Publish
-      run: dotnet publish FarmAPI/FarmAPI.csproj --configuration Release --no-build --output ./publish
-    - uses: actions/upload-artifact@v4
-      with:
-        name: package-app-${{github.run_number}}
-        path: ./publish
+      run: dotnet test --no-build
