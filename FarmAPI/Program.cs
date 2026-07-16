@@ -68,3 +68,6 @@ app.MapGet("/animals/random", () =>
     .WithOpenApi();
 
 app.Run();
+
+
+
