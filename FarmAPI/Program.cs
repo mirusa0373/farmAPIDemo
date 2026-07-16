@@ -67,4 +67,20 @@ app.MapGet("/animals/random", () =>
     .WithName("GetRandomAnimal")
     .WithOpenApi();
 
+// add a route to return all animals of a certain species
+app.MapGet("/animals/species/{species}", (string species) =>
+{
+    var speciesAnimals = animals
+        .Where(a => a.Species.Equals(species, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+    
+    if (speciesAnimals.Count == 0)
+        return Results.NotFound($"No animals found with species: {species}");
+    
+    return Results.Ok(speciesAnimals);
+})
+    .WithName("GetAnimalsBySpecies")
+    .WithOpenApi();
+
+
 app.Run();
