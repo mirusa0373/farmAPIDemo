@@ -62,26 +62,20 @@ Configure these in your GitHub organization or repository settings:
 ###### Development Environment
 - Rule 1: **Untick** box 'Required Reviewers'
 - Rule 2: **Tick** box 'Allow administrators to bypass configured protection rules
-![DevConfig](./assets/image3.png)
  
 ###### Staging Environment
 - Rule 1: **Tick** box 'Required Reviewers'
 - Rule 2: **Tick** box 'Allow administrators to bypass configured protection rules
-![StgConfig](./assets/image2.png)
  
 ###### Production Environment
 - Rule 1: **Tick** box 'Required Reviewers'
 - Rule 2: **Tick** box 'Allow administrators to bypass configured protection rules
-![ProdConfig](./assets/image1.png)
  
 ###### Rulesets
 - Add a branch protection ruleset
 - Target branch should be main
 - Tick box 'Require a pull request before merging'
 - Set number of approvals to **1**
-![RuleConfig](./assets/image4.png)
-![RuleConfig2](./assets/image5.png)
-![RuleConfig3](./assets/image6.png)
  
 
 #### Trigger Workflow Run
